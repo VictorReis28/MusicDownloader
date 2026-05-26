@@ -15,6 +15,15 @@ function App() {
   const eventSourceRef = useRef(null)
 
   useEffect(() => {
+    if (format === 'mp4') {
+      const mp4Qualities = ['144', '240', '360', '480', '720', '1080', 'best']
+      if (!mp4Qualities.includes(quality)) {
+        setQuality('360')
+      }
+    }
+  }, [format, quality])
+
+  useEffect(() => {
     // Fetch available folders
     fetch('http://localhost:8000/api/folders')
       .then(res => res.json())
@@ -105,6 +114,9 @@ function App() {
                 </>
               ) : (
                 <>
+                  <option value="144">144p</option>
+                  <option value="240">240p</option>
+                  <option value="360">360p</option>
                   <option value="480">480p</option>
                   <option value="720">720p (HD)</option>
                   <option value="1080">1080p (Full HD)</option>
