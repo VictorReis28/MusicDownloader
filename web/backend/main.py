@@ -29,6 +29,14 @@ class DownloadRequest(BaseModel):
 async def progress_callback(data):
     await event_queue.put(data)
 
+
+def clear_event_queue():
+    while not event_queue.empty():
+        try:
+            event_queue.get_nowait()
+        except asyncio.QueueEmpty:
+            break
+
 @app.get("/api/folders")
 async def list_folders():
     # List folders in the project root and some common ones
@@ -47,6 +55,8 @@ async def list_folders():
 async def start_download(req: DownloadRequest, background_tasks: BackgroundTasks):
     loop = asyncio.get_event_loop()
     downloader = Downloader(progress_callback=progress_callback, loop=loop)
+
+    clear_event_queue()
     
     # Resolve output directory
     if os.path.isabs(req.folder):
