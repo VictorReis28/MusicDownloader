@@ -72,6 +72,13 @@ function App() {
       const data = JSON.parse(event.data);
       setProgress(data);
 
+      if (data.status === "error") {
+        setError(data.message || "Falha no download.");
+        setIsDownloading(false);
+        closeEventSource();
+        return;
+      }
+
       if (data.status === "finished" && data.index === data.total) {
         setIsDownloading(false);
         closeEventSource();
